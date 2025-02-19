@@ -8,7 +8,7 @@ use anyhow::{bail, Result};
 use crossterm::{cursor, style::Stylize, terminal, terminal::ClearType, ExecutableCommand};
 use once_cell::sync::Lazy;
 use owo_colors::OwoColorize;
-use rains::{
+use ra::{
     cli::{Opts, Subcommand},
     invest::{quote::Quote, Exchange, Investment, Market},
     sina::Sina,
@@ -325,13 +325,32 @@ fn write_quote(quote: &Quote) {
     let rate = (quote.now / quote.close - 1.0) * 100.0;
     let now = format!("{:.2} {:.2}%", quote.now, rate);
     // 港股指数成交额 * 1000
-    let volume =
+    // let volume =
         if Regex::new("HK([A-Z]{3})").unwrap().is_match(&quote.symbol) { quote.volume * 1000.0 } else { quote.volume };
 
+    // println!(
+    //     "{} {}  {:<8}  {:<16} \t昨收：{:.2}\t今开：{:.2}\t最高：{:.2}\t最低：{:.2}\t成交量：{:<8}\t成交额：{:<8}\t{}",
+    //     quote.date,
+    //     quote.time,
+    //     quote.symbol,
+    //     match rate {
+    //         _ if rate > 0.0 => now.red(),
+    //         _ if rate < 0.0 => now.green(),
+    //         _ => now.dark_grey(),
+    //     }
+    //     .bold()
+    //     .underline(),
+    //     quote.close,
+    //     quote.open,
+    //     quote.high,
+    //     quote.low,
+    //     fmt_num(&quote.turnover),
+    //     fmt_num(&volume),
+    //     quote.name,
+    // );
     println!(
-        "{} {}  {:<8}  {:<16} \t昨收：{:.2}\t今开：{:.2}\t最高：{:.2}\t最低：{:.2}\t成交量：{:<8}\t成交额：{:<8}\t{}",
-        quote.date,
-        quote.time,
+        "{:<5} {:<8}  {:<16} \t昨收：{:.2}\t今开：{:.2}\t最高：{:.2}\t最低：{:.2}",
+        quote.name,
         quote.symbol,
         match rate {
             _ if rate > 0.0 => now.red(),
@@ -344,9 +363,6 @@ fn write_quote(quote: &Quote) {
         quote.open,
         quote.high,
         quote.low,
-        fmt_num(&quote.turnover),
-        fmt_num(&volume),
-        quote.name,
     );
 }
 
